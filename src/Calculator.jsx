@@ -1,52 +1,127 @@
 import React, {useState} from 'react'
 
 const Calculator = () => {
-    const [display, setDisplay] = useState('')
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState(0)
+  const [lastActionEquals, setLastActionEquals] = useState(false)
 
-    const handleClick = (value) => {
-        setDisplay(display+value)
+  const handleNumberClick = (number) => {
+    if (lastActionEquals) {
+      setInput(number.toString())
+      setLastActionEquals(false)
+    }else {
+      setInput(input + number.toString())
     }
-    const calculate = () =>{
-        try {
-            setDisplay(eval(display))
-        } catch (error) {
-            setDisplay('error')
-        }
+  }
+  const handleOperatorClick = (operator) => {
+    // if (lastActionEquals) {
+    //   setInput(result + operator)
+    // }else {
+    //   setInput(input + operator)
+    // }
+    setInput((prevInput) => prevInput + operator);
+    setLastActionEquals(false);
+  }
+  const handleEqualClick = () => {
+    try {
+      
+      const evaluatedResult = eval(input);
+      setResult(evaluatedResult);
+      setInput(evaluatedResult.toString())
+      setLastActionEquals(true)
+    } catch (error) {
+      setInput("Error")
+      setLastActionEquals(true)
     }
-    const clearDisplay = ()=>{
-        setDisplay('');
-    }
+  }
+  const handleClear = () => {
+    setInput('');
+    setResult(0);
+    setLastActionEquals(false);
+  }
   return (
     <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
-      <div className='bg-white p-6 rounded shadow-md w-80'>{/*Display */} </div>
-      <div className='mb-4 bg-gray-200 p-4 text-right text-xl font-mono rounded'>
-        {display || '0'}
-      </div>
-      {/*Buttons */}
-      <div className='grid grid-cols-4 gap-2'>
-        {/*Number Buttons */}
-        {[7, 8, 9,'C', 4, 5, 6,'/', 1, 2, 3,'*','.', 0,'=','-'].map((btn) => (
-            <button
-            key={btn}
-            onClick={()=>(btn === '=' ? calculate(): btn==="C" ?clearDisplay(): handleClick(btn))}
-            
-            className={`p-4 text-lg rounded ${
-                btn === '='
-                  ? 'bg-blue-500 text-white hover:bg-blue-600'
-                  : btn === 'C'
-                  ? 'bg-red-500 text-white hover:bg-red-600'
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-              >
-                {btn}
+      <div className='w-80 p-4 bg-white rounded-lg shadow-md'>
+        <div className='text-right bg-gray-200 text-xl p-2 mb-4 rounded-md'>{input || result}</div>
+      
+        <div className='grid grid-cols-4 gap-2'>
+          <button 
+            className='col-span-2 bg-red-500 text-white rounded p-2'
+            onClick={handleClear}
+          >
+            C
+          </button>
+          <button 
+            className='operatorButton'
+            onClick={() => handleOperatorClick('/')}
+          >
+            ÷
+          </button>
+          <button 
+            className='operatorButton'
+            onClick={() => handleOperatorClick('*')}
+          >
+            ×
+          </button>
+          {[7,8,9].map((num)=>(
+            <button 
+              key={num}
+              className='numberButton'
+              onClick={()=>handleNumberClick(num)}
+            >
+              {num}
             </button>
-        ))}
-        <button
-            onClick={() => handleClick('+')}
-            className="p-4 text-lg rounded bg-gray-300 col-span-4 hover:bg-gray-400"
+          ))}
+          <button 
+            className='operatorButton'
+            onClick={() => handleOperatorClick('-')}
+          >
+            -
+          </button>
+          {[4,5,6].map((num)=>(
+            <button 
+              key={num}
+              className='numberButton'
+              onClick={()=>handleNumberClick(num)}
+            >
+              {num}
+            </button>
+          ))}
+          <button 
+            className='operatorButton'
+            onClick={() => handleOperatorClick('+')}
           >
             +
           </button>
+          {[1,2,3].map((num)=>(
+            <button 
+             key={num}
+              className='numberButton'
+              onClick={()=>handleNumberClick(num)}
+            >
+              {num}
+            </button>
+          ))}
+          <button 
+            className='row-span-2 bg-green-500 text-white rounded p-2'
+            onClick={handleEqualClick}
+          >
+            =
+          </button>
+
+          <button 
+            className='numberButton'
+            onClick={()=>handleNumberClick(0)}
+          >
+            0
+          </button>
+          <button 
+            className='numberButton'
+            onClick={()=>handleNumberClick('.')}
+          >
+            .
+          </button>
+        </div>
       </div>
     </div>
   )
