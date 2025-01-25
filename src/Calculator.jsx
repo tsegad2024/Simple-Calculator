@@ -1,9 +1,13 @@
 import React, {useState} from 'react'
+import { evaluate } from 'mathjs'
 
 const Calculator = () => {
   const [input, setInput] = useState('')
   const [result, setResult] = useState(0)
   const [lastActionEquals, setLastActionEquals] = useState(false)
+
+  const fakeinput = "1 + 2; alert('Hacked!')";
+
 
   const handleNumberClick = (number) => {
     if (lastActionEquals) {
@@ -25,7 +29,7 @@ const Calculator = () => {
   const handleEqualClick = () => {
     try {
       
-      const evaluatedResult = eval(input);
+      const evaluatedResult = evaluate(input);
       setResult(evaluatedResult);
       setInput(evaluatedResult.toString())
       setLastActionEquals(true)
